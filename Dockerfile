@@ -20,7 +20,7 @@ ENV DATABASE_ROOT_PWD=pwd
 CMD ["/sbin/my_init"]
 
 # Expose ports
-EXPOSE 3389 5000/udp 
+EXPOSE 3389 5000/udp 6543 6544
 
 
 # set volumes
@@ -68,10 +68,31 @@ apt-get install \
 xrdp -y && \
 mv /root/xrdp.ini /etc/xrdp/xrdp.ini && \
 
-# install mythtv-backend and mariadb-server
+# install mythtv-backend
 apt-get install -y --no-install-recommends \
 mythtv-backend \
 iputils-ping && \
+
+# install mythweb
+apt-get install \
+mythweb -y && \
+
+# install hdhomerun utilities
+apt-get install \
+hdhomerun-config-gui \
+hdhomerun-config -y && \
+
+# Configure apache
+sed -i "s/short_open_tag = Off/short_open_tag = On/" /etc/php5/apache2/php.ini && \
+sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php5/apache2/php.ini && \
+mv /root/000-default-mythbuntu.conf /etc/apache2/sites-available/000-default-mythbuntu.conf && \
+mv /root/mythweb.conf /etc/apache2/sites-available/mythweb.conf  && \
+echo "export DATABASE_HOST" >> /etc/apache2/envvars && \
+echo "export DATABASE_PORT" >> /etc/apache2/envvars && \
+
+# mythweb CGI fix: See https://bugs.launchpad.net/mythbuntu/+bug/1316409
+ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/cgi.load && \
+echo AddHandler cgi-script .cgi .pl >> /etc/apache2/mods-enabled/mime.conf && \
 
 # set mythtv to uid and gid
 usermod -u ${USER_ID} mythtv && \
@@ -90,7 +111,6 @@ chown -R mythtv:users /var/lib/mythtv /var/log/mythtv && \
 # set up passwordless sudo
 echo '%adm ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/adm && \
 chmod 0440 /etc/sudoers.d/adm && \
-
 
 # clean up
 apt-get clean && \

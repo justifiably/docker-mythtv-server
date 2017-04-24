@@ -52,8 +52,8 @@ else
 echo "kill switch is set"
 fi
 
-if [ ! -f "/home/mythtv/Desktop/hdhomerun-config.desktop" ]; then
-cp /root/hdhomerun-config.desktop /home/mythtv/Desktop/hdhomerun-config.desktop
+if [ ! -f "/home/mythtv/Desktop/hdhr.desktop" ]; then
+cp /usr/share/applications/hdhr.desktop /home/mythtv/Desktop/hdhr.desktop
 else
 echo "Hdhomerun Config is set"
 fi
