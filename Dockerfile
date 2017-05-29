@@ -85,6 +85,7 @@ hdhomerun-config -y && \
 # Configure apache
 sed -i "s/short_open_tag = Off/short_open_tag = On/" /etc/php5/apache2/php.ini && \
 sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php5/apache2/php.ini && \
+mv /root/ports.conf /etc/apache2/ports.conf && \
 mv /root/000-default-mythbuntu.conf /etc/apache2/sites-available/000-default-mythbuntu.conf && \
 mv /root/mythweb.conf /etc/apache2/sites-available/mythweb.conf  && \
 echo "export DATABASE_HOST" >> /etc/apache2/envvars && \
